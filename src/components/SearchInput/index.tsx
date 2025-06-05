@@ -1,14 +1,18 @@
-import { useState } from 'react';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 interface SearchInputProps {
   onSearch: (query: string) => void;
+  onSetQuery: (query: string) => void;
   loading: boolean;
+  query: string;
 }
 
-export const SearchInput = ({ onSearch, loading }: SearchInputProps) => {
-  const [query, setQuery] = useState('');
-
+export const SearchInput = ({
+  onSearch,
+  loading,
+  query,
+  onSetQuery,
+}: SearchInputProps) => {
   const handleSearch = () => {
     onSearch(query);
   };
@@ -26,7 +30,7 @@ export const SearchInput = ({ onSearch, loading }: SearchInputProps) => {
         type="text"
         placeholder="Enter username"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => onSetQuery(e.target.value)}
         onKeyDown={handleKeyDown}
         aria-label="Search GitHub users"
         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-black"
@@ -40,6 +44,7 @@ export const SearchInput = ({ onSearch, loading }: SearchInputProps) => {
         {loading && <LoadingSpinner />}
         Search
       </button>
+      {query && <p>Showing users for "{query}"</p>}
     </div>
   );
 };

@@ -3,11 +3,11 @@ import type { GitHubUser } from '@/types/github';
 import { useState } from 'react';
 
 interface UseUserSearchResult {
-  users: GitHubUser[];
-  loading: boolean;
-  error: string | null;
-  searchUsers: (query: string) => Promise<void>;
   clearResults: () => void;
+  error: string | null;
+  loading: boolean;
+  searchUsers: (query: string) => Promise<void>;
+  users: GitHubUser[];
 }
 
 export const useSearchUsers = (): UseUserSearchResult => {
