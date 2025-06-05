@@ -22,7 +22,7 @@ This application provides a simple and intuitive interface to:
 - React
 - TypeScript
 - Vite
-- GitHub API v3
+- GitHub REST API (2022-11-28 version)
 
 ## Getting Started
 
@@ -30,6 +30,23 @@ This application provides a simple and intuitive interface to:
 
 - Node.js (latest LTS version recommended)
 - npm or yarn
+- GitHub Personal Access Token (for local development)
+
+### Environment Setup
+
+1. Create a GitHub Personal Access Token:
+
+   - Go to GitHub Settings > Developer Settings > Personal Access Tokens > Tokens (classic)
+   - Generate a new token with the following permissions:
+     - `read:user`
+     - `repo`
+   - Copy the generated token
+
+2. Create a `.env.local` file in the root directory:
+
+```bash
+VITE_GITHUB_API_TOKEN=your_github_token_here
+```
 
 ### Installation
 
@@ -62,6 +79,8 @@ The application will be available at `http://localhost:5173`
 
 This project integrates with the GitHub API v3. For more information about the API, visit:
 [GitHub API Documentation](https://developer.github.com/v3/)
+
+Note: The GitHub API has rate limits. Using a personal access token increases your rate limit from 60 requests per hour to 5,000 requests per hour.
 
 ## Development
 
