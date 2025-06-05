@@ -36,7 +36,7 @@ This application provides a simple and intuitive interface to:
 1. Clone the repository:
 
 ```bash
-git clone [git@github.com:mrirfanto/github-repos-explorer.git]
+git clone git@github.com:mrirfanto/github-repos-explorer.git
 cd github-repos-explorer
 ```
 
