@@ -1,28 +1,33 @@
 import type { GitHubUser } from '@/types/github';
 import { useState } from 'react';
 import { HiChevronDown } from 'react-icons/hi2';
+import { RepositoryList } from './components/RepositoryList';
+import { useGetRepositories } from '@/hooks/useGetRepositories';
 
 interface UserListProps {
   query: string;
   users: GitHubUser[];
   loading: boolean;
-  onSelectUser: (user: GitHubUser) => void;
 }
 
-export const UserList = ({
-  users,
-  query,
-  loading,
-  onSelectUser,
-}: UserListProps) => {
+export const UserList = ({ users, query, loading }: UserListProps) => {
+  const {
+    repositories,
+    loading: repositoriesLoading,
+    fetchUserRepositories,
+  } = useGetRepositories();
   const [expandedUserId, setExpandedUserId] = useState<number | null>(null);
 
   const handleToggleExpand = (userId: number) => {
     const user = users.find((user) => user.id === userId);
 
     if (user) {
+      const isExpanding = expandedUserId !== userId;
       setExpandedUserId((prev) => (prev === userId ? null : userId));
-      onSelectUser(user);
+
+      if (isExpanding) {
+        fetchUserRepositories(user.login);
+      }
     }
   };
 
@@ -60,9 +65,11 @@ export const UserList = ({
                   id={`user-accordion-${user.id}`}
                   className="animate-fade-in"
                 >
-                  <ul className="bg-white text-gray-700 text-sm list-none p-4 pr-0 m-0">
-                    <li className="bg-gray-200">test</li>
-                  </ul>
+                  <RepositoryList
+                    repositories={repositories}
+                    loading={repositoriesLoading}
+                    username={user.login}
+                  />
                 </div>
               )}
             </li>

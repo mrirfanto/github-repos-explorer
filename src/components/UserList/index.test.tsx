@@ -1,8 +1,11 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 import { UserList } from '.';
 import type { GitHubUser } from '@/types/github';
+import { userEvent } from '@testing-library/user-event';
+import { useGetRepositories } from '@/hooks/useGetRepositories';
+
+vi.mock('@/hooks/useGetRepositories');
 
 const mockUsers: GitHubUser[] = [
   {
@@ -21,49 +24,43 @@ const mockUsers: GitHubUser[] = [
 
 const mockQuery = 'testuser';
 const mockLoading = false;
+const mockFetchUserRepositories = vi.fn();
 
 describe('UserList', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    vi.mocked(useGetRepositories).mockReturnValue({
+      repositories: [],
+      loading: false,
+      fetchUserRepositories: mockFetchUserRepositories,
+      error: null,
+      selectedUser: null,
+    });
+  });
+
   it('should render list of users', () => {
     render(
-      <UserList
-        users={mockUsers}
-        onSelectUser={vi.fn()}
-        query={mockQuery}
-        loading={mockLoading}
-      />
+      <UserList users={mockUsers} query={mockQuery} loading={mockLoading} />
     );
 
     expect(screen.getByText('testuser1')).toBeInTheDocument();
     expect(screen.getByText('testuser2')).toBeInTheDocument();
   });
 
-  it('should call onSelectUser when user is clicked', async () => {
-    const mockOnSelectUser = vi.fn();
+  it('should render empty state when no users', () => {
+    render(<UserList users={[]} query={mockQuery} loading={mockLoading} />);
 
+    expect(screen.getByText('No users found')).toBeInTheDocument();
+  });
+
+  it('should trigger fetchUserRepositories when user is clicked', async () => {
     render(
-      <UserList
-        users={mockUsers}
-        onSelectUser={mockOnSelectUser}
-        query={mockQuery}
-        loading={mockLoading}
-      />
+      <UserList users={mockUsers} query={mockQuery} loading={mockLoading} />
     );
 
     await userEvent.click(screen.getByRole('button', { name: 'testuser1' }));
 
-    expect(mockOnSelectUser).toHaveBeenCalledWith(mockUsers[0]);
-  });
-
-  it('should render empty state when no users', () => {
-    render(
-      <UserList
-        users={[]}
-        onSelectUser={vi.fn()}
-        query={mockQuery}
-        loading={mockLoading}
-      />
-    );
-
-    expect(screen.getByText('No users found')).toBeInTheDocument();
+    expect(mockFetchUserRepositories).toHaveBeenCalledWith('testuser1');
   });
 });
